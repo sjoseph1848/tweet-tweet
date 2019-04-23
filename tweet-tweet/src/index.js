@@ -1,53 +1,73 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import moment from 'moment';
 
-function Tweet() {
+function Tweet({tweet}) {
   return(
     <div className="tweet">
-      <Avatar />
-      <div className="conten">
-        <NameWithHandle/>
-        <Message />
+      <Avatar hash={tweet.gravatar}/>
+      <div className="content">
+        <NameWithHandle author={tweet.author}/> 
+        <Time time={tweet.timestamp} /> 
+        <Message text={tweet.message} />
         <div className="buttons">
           <ReplyButton/>
           <RetweetButton/>
           <LikeButton />
-          <MoreOptionsButton />        
+          <MoreOptionsButton />  
+              
         </div>
      </div>
     </div>
   );
 }
 
+var testTweet = {
+  message:"Something about cats..",
+  gravatar:"xyz",
+  author:{
+    handle:"catperson",
+    name:"IAMA Cat Person"
+  },
+  likes:2,
+  retweets: 0,
+  timestamp:"2016-07-30 21:21:37"
+};
 
 
-function Avatar() {
+
+
+function Avatar({hash}) {
+  var url = `https://www.gravatar.com/avatar/${hash}`
   return (
     <img
-    src="https://source.unsplash.com/user/erondu/daily"
+    src={url}
     className="avatar"
     alt="avatar" />
   );
 }
 
-function Message() {
+function Message({text}) {
   return (
     <div className="message">
-      Blah Blah Blah
+     {text}
     </div>
   );
 }
 
-function NameWithHandle() {
+function NameWithHandle({author}) {
+  
+  const {name, handle} = author;
+
   return (
     <span 
       className="name-with-handle">
       <span className="name">
-        Rob Johnson 
+        {name}
       </span>
       <span className="handle">
-        @robjohnson123
+        @{handle}
       </span>
     </span>
   );
@@ -55,10 +75,16 @@ function NameWithHandle() {
 
 
 //Buttons 
-const Time = () => 
-  <span className="time">
-    3h ago
-  </span>;
+const Time = ({time}) => {
+  const timeString = moment(
+    time
+  ).fromNow();
+  return (
+    <span className="time">
+    {timeString}
+  </span>
+  );
+}
 
 
 const ReplyButton = () => 
@@ -77,6 +103,7 @@ const MoreOptionsButton = () =>
     more-options-buttons" />;
 
 ReactDOM.render(
-  <Tweet/>,
+  <Tweet tweet={testTweet}/>,
   document.querySelector('#root')
 )
+      
